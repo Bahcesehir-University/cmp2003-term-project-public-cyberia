@@ -199,8 +199,10 @@ std::vector<ZoneCount> TripAnalyzer::topZones(int k) const {
 
 std::vector<SlotCount> TripAnalyzer::topBusySlots(int k) const {
     vector<SlotCount> results;
-    // Heuristic reserve: assume average zone is active in ~5 distinct hours (e.g. rushes, lunch)
-    results.reserve(slotCountMap.size() * 4); 
+// To prevent over memory usage we use heuristic reservation: We call results.reserve (map_size * 4).
+// This assumes that the average zone is active for only ~4k distinct hours per day 
+// (4k is found by trial-and-error that it is the most efficient coefficient) (k is coefficient for heuristic number).
+    results.reserve(slotCountMap.size() * 4);
     
     for (const auto& [zone, hours] : slotCountMap) {
         for (int h = 0; h < 24; ++h) {
@@ -241,3 +243,4 @@ std::vector<SlotCount> TripAnalyzer::topBusySlots(int k) const {
     return results;
 
 }
+
